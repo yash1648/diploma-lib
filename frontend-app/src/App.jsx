@@ -1,35 +1,35 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+    const [message, setMessage] = useState('');
+    const [responseData, setResponseData] = useState(null);
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    useEffect(() => {
+        // Fetch data from Flask API
+        axios.get('http://127.0.0.1:5000/api/greet')
+            .then(response => {
+                setMessage(response.data.message);
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    }, []);
 
-export default App
+    const sendDataToFlask = () => {
+        // Send POST request to Flask API
+        axios.post('http://127.0.0.1:5000/api/data', { exampleKey: 'exampleValue' })
+            .then(response => {
+                setResponseData(response.data.received);
+            })
+            .catch(error => console.error('Error sending data:', error));
+    };
+
+    return (
+        <div>
+            <h1>{message}</h1>
+            <button onClick={sendDataToFlask}>Send Data to Flask</button>
+            {responseData && <pre>{JSON.stringify(responseData, null, 2)}</pre>}
+        </div>
+    );
+};
+
+export default App;

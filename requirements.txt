@@ -1,2 +1,5 @@
 fastapi[standard]
 fastapi[all]
+python-jose
+passlib
+bcrypt

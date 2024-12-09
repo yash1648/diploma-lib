@@ -1,17 +1,25 @@
-from flask import Flask, jsonify, request
-from flask_cors import CORS
+from fastapi import FastAPI
+from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
+app = FastAPI()
 
-app = Flask(__name__)
-CORS(app)  # Allow requests from the React frontend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5174","http://localhost:5174"], 
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-@app.route('/api/greet', methods=['GET'])
-def greet():
-    return jsonify({"message": "Hello from Flask!"})
+class Item(BaseModel):
+    name: str
+    description: str
+    price: float
 
-@app.route('/api/data', methods=['POST'])
-def receive_data():
-    data = request.json
-    return jsonify({"received": data}), 200
+@app.get("/")
+async def read_root():
+    return {"message": "Welcome to FastAPI"}
 
-if __name__ == '__main__':
-    app.run(debug=True)
+@app.post("/items/")
+async def create_item(item: Item):
+    return {"message": f"Item {item.name} created", "data": item}

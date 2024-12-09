@@ -1,33 +1,29 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useState, useEffect } from 'react';
+import { fetchWelcomeMessage, createItem } from './api';
 
 const App = () => {
     const [message, setMessage] = useState('');
-    const [responseData, setResponseData] = useState(null);
+    const [response, setResponse] = useState(null);
 
     useEffect(() => {
-        // Fetch data from Flask API
-        axios.get('http://127.0.0.1:5000/api/greet')
-            .then(response => {
-                setMessage(response.data.message);
-            })
-            .catch(error => console.error('Error fetching data:', error));
+        const getMessage = async () => {
+            const data = await fetchWelcomeMessage();
+            setMessage(data.message);
+        };
+        getMessage();
     }, []);
 
-    const sendDataToFlask = () => {
-        // Send POST request to Flask API
-        axios.post('http://127.0.0.1:5000/api/data', { exampleKey: 'exampleValue' })
-            .then(response => {
-                setResponseData(response.data.received);
-            })
-            .catch(error => console.error('Error sending data:', error));
+    const handleCreateItem = async () => {
+        const item = { name: 'Laptop', description: 'A powerful device', price: 1500 };
+        const data = await createItem(item);
+        setResponse(data);
     };
 
     return (
         <div>
             <h1>{message}</h1>
-            <button onClick={sendDataToFlask}>Send Data to Flask</button>
-            {responseData && <pre>{JSON.stringify(responseData, null, 2)}</pre>}
+            <button onClick={handleCreateItem}>Create Item</button>
+            {response && <p>{response.message}</p>}
         </div>
     );
 };

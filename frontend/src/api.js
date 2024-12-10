@@ -1,13 +1,13 @@
-import axios from 'axios';
-
-const API_BASE_URL = 'http://127.0.0.1:8000';
-
-export const fetchWelcomeMessage = async () => {
-    const response = await axios.get(`${API_BASE_URL}/`);
-    return response.data;
-};
-
-export const createItem = async (item) => {
-    const response = await axios.post(`${API_BASE_URL}/items/`, item);
-    return response.data;
-};
+export async function fetchHelloWorld() {
+    try {
+      const response = await fetch('/api/hello'); // Replace with your API URL
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      return data.message; // Assuming API returns { message: "Hello, World!" }
+    } catch (error) {
+      console.error('Error fetching hello world:', error);
+      throw error;
+    }
+  }

@@ -1,31 +1,26 @@
-import { useState, useEffect } from 'react';
-import { fetchWelcomeMessage, createItem } from './api';
+import React, { useEffect, useState } from 'react';
+import { fetchHelloWorld } from './api'; // Adjust path if needed
 
-const App = () => {
-    const [message, setMessage] = useState('');
-    const [response, setResponse] = useState(null);
+function App() {
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState(null);
 
-    useEffect(() => {
-        const getMessage = async () => {
-            const data = await fetchWelcomeMessage();
-            setMessage(data.message);
-        };
-        getMessage();
-    }, []);
+  useEffect(() => {
+    // Call the API when the component mounts
+    fetchHelloWorld()
+      .then((msg) => setMessage(msg))
+      .catch((err) => setError('Failed to fetch message.'));
+  }, []);
 
-    const handleCreateItem = async () => {
-        const item = { name: 'Laptop', description: 'A powerful device', price: 1500 };
-        const data = await createItem(item);
-        setResponse(data);
-    };
+  if (error) {
+    return <h1>{error}</h1>;
+  }
 
-    return (
-        <div>
-            <h1>{message}</h1>
-            <button onClick={handleCreateItem}>Create Item</button>
-            {response && <p>{response.message}</p>}
-        </div>
-    );
-};
+  return (
+    <div>
+      <h1>{message || 'Loading...'}</h1>
+    </div>
+  );
+}
 
 export default App;
